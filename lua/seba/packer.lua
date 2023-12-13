@@ -13,6 +13,9 @@ return require('packer').startup(function(use)
     use {
         'theprimeagen/harpoon'
     }
+    use {
+        'jiangmiao/auto-pairs'
+    }
 
     use {
         'tpope/vim-fugitive'
