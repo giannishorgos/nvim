@@ -84,6 +84,11 @@ _G.packer_plugins = {
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\auto-pairs",
     url = "https://github.com/jiangmiao/auto-pairs"
   },
+  ["auto-save.nvim"] = {
+    loaded = true,
+    path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\auto-save.nvim",
+    url = "https://github.com/pocco81/auto-save.nvim"
+  },
   ["cmp-nvim-lsp"] = {
     loaded = true,
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\cmp-nvim-lsp",
@@ -153,6 +158,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\tokyonight.nvim",
     url = "https://github.com/folke/tokyonight.nvim"
+  },
+  ["vim-closetag"] = {
+    loaded = true,
+    path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\vim-closetag",
+    url = "https://github.com/alvan/vim-closetag"
   },
   ["vim-fugitive"] = {
     loaded = true,

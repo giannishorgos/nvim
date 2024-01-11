@@ -44,7 +44,7 @@ lsp_zero.format_on_save({
         },
       },
       filetypes = {},
-      formatters = {},
+      formatters = {'prettier'},
     }
   }
 })

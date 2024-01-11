@@ -21,11 +21,11 @@ return require('packer').startup(function(use)
         'tpope/vim-fugitive'
     }
 
-    use { "ellisonleao/gruvbox.nvim" }
-    use { "folke/tokyonight.nvim" }
+    use "ellisonleao/gruvbox.nvim" 
+    use "folke/tokyonight.nvim" 
     use "bluz71/vim-nightfly-colors"
     use "NLKNguyen/papercolor-theme"
-
+    use 'alvan/vim-closetag'
     use {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v3.x',
@@ -46,6 +46,8 @@ return require('packer').startup(function(use)
         "iamcco/markdown-preview.nvim",
         run = function() vim.fn["mkdp#util#install"]() end,
     })
+
+    use "pocco81/auto-save.nvim"
 
     -- use({ "iamcco/markdown-preview.nvim", run = "cd app && npm install", setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, })
 
