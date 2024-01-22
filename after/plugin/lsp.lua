@@ -15,14 +15,9 @@ lsp_zero.set_server_config({
 
 lsp_zero.on_attach(function(client, bufnr)
   lsp_zero.default_keymaps({buffer = bufnr})
-  lsp_zero.buffer_autoformat()
 end)
 
 lsp_zero.format_on_save({
-  format_opts = {
-    async = false,
-    timeout_ms = 10000,
-  },
   servers = {
     ['pylsp'] = {'python', },
     ['rust_analyzer'] = {'rust'},
@@ -44,7 +39,6 @@ lsp_zero.format_on_save({
         },
       },
       filetypes = {},
-      formatters = {'prettier'},
     }
   }
 })

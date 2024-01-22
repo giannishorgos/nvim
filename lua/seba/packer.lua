@@ -49,6 +49,13 @@ return require('packer').startup(function(use)
 
     use "pocco81/auto-save.nvim"
 
+    -- Prettier Code Formatter
+use {
+    'prettier/vim-prettier',
+    run = 'npm install',
+    ft = { 'javascript', 'typescript' },
+}
+
     -- use({ "iamcco/markdown-preview.nvim", run = "cd app && npm install", setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, })
 
 end)
