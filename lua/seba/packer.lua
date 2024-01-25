@@ -27,6 +27,22 @@ return require('packer').startup(function(use)
     use "NLKNguyen/papercolor-theme"
     use 'alvan/vim-closetag'
     use {
+        'wfxr/minimap.vim',
+        -- build = "cargo install --locked code-minimap",
+        cmd = { "Minimap", "MinimapClose", "MinimapToggle", "MinimapRefresh", "MinimapUpdateHighlight" },
+        init = function()
+            vim.g.minimap_width = 10
+            vim.g.minimap_auto_start = true
+            vim.g.minimap_auto_start_win_enter = true
+            vim.g.minimap_highlight_range = true
+            vim.g.minimap_highlight_search = true
+        end,
+    }   
+    use {
+        'nvim-lualine/lualine.nvim',
+        requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+    }
+    use {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v3.x',
         requires = {

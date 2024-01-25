@@ -109,6 +109,11 @@ _G.packer_plugins = {
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\lsp-zero.nvim",
     url = "https://github.com/VonHeikemen/lsp-zero.nvim"
   },
+  ["lualine.nvim"] = {
+    loaded = true,
+    path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\lualine.nvim",
+    url = "https://github.com/nvim-lualine/lualine.nvim"
+  },
   ["markdown-preview.nvim"] = {
     loaded = true,
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\markdown-preview.nvim",
@@ -124,6 +129,14 @@ _G.packer_plugins = {
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\mason.nvim",
     url = "https://github.com/williamboman/mason.nvim"
   },
+  ["minimap.vim"] = {
+    commands = { "Minimap", "MinimapClose", "MinimapToggle", "MinimapRefresh", "MinimapUpdateHighlight" },
+    loaded = false,
+    needs_bufread = false,
+    only_cond = false,
+    path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\opt\\minimap.vim",
+    url = "https://github.com/wfxr/minimap.vim"
+  },
   ["nvim-cmp"] = {
     loaded = true,
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\nvim-cmp",
@@ -133,6 +146,12 @@ _G.packer_plugins = {
     loaded = true,
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\nvim-lspconfig",
     url = "https://github.com/neovim/nvim-lspconfig"
+  },
+  ["nvim-web-devicons"] = {
+    loaded = false,
+    needs_bufread = false,
+    path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\opt\\nvim-web-devicons",
+    url = "https://github.com/nvim-tree/nvim-web-devicons"
   },
   ["packer.nvim"] = {
     loaded = true,
@@ -184,6 +203,46 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
+
+-- Command lazy-loads
+time([[Defining lazy-load commands]], true)
+pcall(vim.api.nvim_create_user_command, 'Minimap', function(cmdargs)
+          require('packer.load')({'minimap.vim'}, { cmd = 'Minimap', l1 = cmdargs.line1, l2 = cmdargs.line2, bang = cmdargs.bang, args = cmdargs.args, mods = cmdargs.mods }, _G.packer_plugins)
+        end,
+        {nargs = '*', range = true, bang = true, complete = function()
+          require('packer.load')({'minimap.vim'}, {}, _G.packer_plugins)
+          return vim.fn.getcompletion('Minimap ', 'cmdline')
+      end})
+pcall(vim.api.nvim_create_user_command, 'MinimapClose', function(cmdargs)
+          require('packer.load')({'minimap.vim'}, { cmd = 'MinimapClose', l1 = cmdargs.line1, l2 = cmdargs.line2, bang = cmdargs.bang, args = cmdargs.args, mods = cmdargs.mods }, _G.packer_plugins)
+        end,
+        {nargs = '*', range = true, bang = true, complete = function()
+          require('packer.load')({'minimap.vim'}, {}, _G.packer_plugins)
+          return vim.fn.getcompletion('MinimapClose ', 'cmdline')
+      end})
+pcall(vim.api.nvim_create_user_command, 'MinimapToggle', function(cmdargs)
+          require('packer.load')({'minimap.vim'}, { cmd = 'MinimapToggle', l1 = cmdargs.line1, l2 = cmdargs.line2, bang = cmdargs.bang, args = cmdargs.args, mods = cmdargs.mods }, _G.packer_plugins)
+        end,
+        {nargs = '*', range = true, bang = true, complete = function()
+          require('packer.load')({'minimap.vim'}, {}, _G.packer_plugins)
+          return vim.fn.getcompletion('MinimapToggle ', 'cmdline')
+      end})
+pcall(vim.api.nvim_create_user_command, 'MinimapRefresh', function(cmdargs)
+          require('packer.load')({'minimap.vim'}, { cmd = 'MinimapRefresh', l1 = cmdargs.line1, l2 = cmdargs.line2, bang = cmdargs.bang, args = cmdargs.args, mods = cmdargs.mods }, _G.packer_plugins)
+        end,
+        {nargs = '*', range = true, bang = true, complete = function()
+          require('packer.load')({'minimap.vim'}, {}, _G.packer_plugins)
+          return vim.fn.getcompletion('MinimapRefresh ', 'cmdline')
+      end})
+pcall(vim.api.nvim_create_user_command, 'MinimapUpdateHighlight', function(cmdargs)
+          require('packer.load')({'minimap.vim'}, { cmd = 'MinimapUpdateHighlight', l1 = cmdargs.line1, l2 = cmdargs.line2, bang = cmdargs.bang, args = cmdargs.args, mods = cmdargs.mods }, _G.packer_plugins)
+        end,
+        {nargs = '*', range = true, bang = true, complete = function()
+          require('packer.load')({'minimap.vim'}, {}, _G.packer_plugins)
+          return vim.fn.getcompletion('MinimapUpdateHighlight ', 'cmdline')
+      end})
+time([[Defining lazy-load commands]], false)
+
 vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Filetype lazy-loads
