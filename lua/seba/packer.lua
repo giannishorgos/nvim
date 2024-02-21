@@ -21,6 +21,9 @@ return require('packer').startup(function(use)
         'tpope/vim-fugitive'
     }
 
+    -- indent line
+    use "lukas-reineke/indent-blankline.nvim"
+
     use "ellisonleao/gruvbox.nvim" 
     use "folke/tokyonight.nvim" 
     use "bluz71/vim-nightfly-colors"
@@ -65,6 +68,7 @@ return require('packer').startup(function(use)
 
     use "pocco81/auto-save.nvim"
 
+    use "lukas-reineke/lsp-format.nvim"
     -- Prettier Code Formatter
 use {
     'prettier/vim-prettier',

@@ -104,6 +104,16 @@ _G.packer_plugins = {
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\harpoon",
     url = "https://github.com/theprimeagen/harpoon"
   },
+  ["indent-blankline.nvim"] = {
+    loaded = true,
+    path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\indent-blankline.nvim",
+    url = "https://github.com/lukas-reineke/indent-blankline.nvim"
+  },
+  ["lsp-format.nvim"] = {
+    loaded = true,
+    path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\lsp-format.nvim",
+    url = "https://github.com/lukas-reineke/lsp-format.nvim"
+  },
   ["lsp-zero.nvim"] = {
     loaded = true,
     path = "C:\\Users\\giann\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\lsp-zero.nvim",
