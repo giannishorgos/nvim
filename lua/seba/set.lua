@@ -5,8 +5,8 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
-vim.opt.updatetime = 50
-vim.opt.colorcolumn = "80"
+vim.opt.updatetime = 30
+-- vim.opt.colorcolumn = "80"
 
 vim.opt.incsearch = true
 vim.opt.hlsearch = false
