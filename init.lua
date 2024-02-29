@@ -263,8 +263,8 @@ require('lazy').setup({
     },
   },
 
-
-  -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
+  'jiangmiao/auto-pairs',
+  'theprimagen/harpoon',
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
   -- require 'kickstart.plugins.autoformat',
@@ -278,6 +278,20 @@ require('lazy').setup({
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   -- { import = 'custom.plugins' },
 }, {})
+
+
+local mark = require("harpoon.mark")
+local ui = require("harpoon.ui")
+
+vim.keymap.set('n', '<leader>a', mark.add_file)
+vim.keymap.set('n', '<leader>he', ui.toggle_quick_menu)
+
+vim.keymap.set('n', '<leader>hh', function() ui.nav_file(1) end)
+vim.keymap.set('n', '<leader>hn', function() ui.nav_file(2) end)
+vim.keymap.set('n', '<leader>ht', function() ui.nav_file(3) end)
+vim.keymap.set('n', '<leader>hj', function() ui.nav_file(4) end)
+vim.keymap.set('n', '<leader>nf', function() ui.nav_next() end)
+vim.keymap.set('n', '<leader>b', function() ui.nav_prev() end)
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
