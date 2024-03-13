@@ -1,43 +1,3 @@
---[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-https://=====================================================================
-
-Kickstart.nvim is *not* a distribution.
-
-Kickstart.nvim is a template for your own configuration.
-  The goal is that you can read every line of code, top-to-bottom, understand
-  what your configuration is doing, and modify it to suit your needs.
-
-  Once you've done that, you should start exploring, configuring and tinkering to
-  explore Neovim!
-
-  If you don't know anything about Lua, I recommend taking some time to read through
-  a guide. One possible example:
-  - https://learnxinyminutes.com/docs/lua/
-
-
-  And then you can explore or search through `:help lua-guide`
-  - https://neovim.io/doc/user/lua-guide.html
-
-
-Kickstart Guide:
-
-I have left several `:help X` comments throughout the init.lua
-You should run that command and read that help section for more information.
-
-In addition, I have some `NOTE:` items throughout the file.
-These are for you, the reader to help understand what is happening. Feel free to delete
-them once you know what you're doing, but they should serve as a guide for when you
-are first encountering a few different constructs in your nvim config.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now :)
---]]
-
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
@@ -72,8 +32,6 @@ vim.opt.rtp:prepend(lazypath)
 --  You can also configure plugins after the setup call,
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
-  -- NOTE: First, some plugins that don't require any configuration
-
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
@@ -82,6 +40,12 @@ require('lazy').setup({
   'tpope/vim-sleuth',
   -- Copilot
   'github/copilot.vim',
+  -- HEX Colors preview
+  {'norcalli/nvim-colorizer.lua', opts = {
+      '*',
+      css = { rgb_fn = true, hsl_fn = true }
+    }
+  },
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
@@ -128,7 +92,13 @@ require('lazy').setup({
       'rafamadriz/friendly-snippets',
     },
   },
-
+  {
+    'akinsho/flutter-tools.nvim',
+    lazy = false,
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+  },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -149,57 +119,6 @@ require('lazy').setup({
           opts.buffer = bufnr
           vim.keymap.set(mode, l, r, opts)
         end
-
-        -- Navigation
-        -- map({ 'n', 'v' }, ']c', function()
-        --   if vim.wo.diff then
-        --     return ']c'
-        --   end
-        --   vim.schedule(function()
-        --     gs.next_hunk()
-        --   end)
-        --   return '<Ignore>'
-        -- end, { expr = true, desc = 'Jump to next hunk' })
-        --
-        -- map({ 'n', 'v' }, '[c', function()
-        --   if vim.wo.diff then
-        --     return '[c'
-        --   end
-        --   vim.schedule(function()
-        --     gs.prev_hunk()
-        --   end)
-        --   return '<Ignore>'
-        -- end, { expr = true, desc = 'Jump to previous hunk' })
-        --
-        -- -- Actions
-        -- -- visual mode
-        -- map('v', '<leader>hs', function()
-        --   gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
-        -- end, { desc = 'stage git hunk' })
-        -- map('v', '<leader>hr', function()
-        --   gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-        -- end, { desc = 'reset git hunk' })
-        -- -- normal mode
-        -- map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
-        -- map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
-        -- map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
-        -- map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
-        -- map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
-        -- map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
-        -- map('n', '<leader>hb', function()
-        --   gs.blame_line { full = false }
-        -- end, { desc = 'git blame line' })
-        -- map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
-        -- map('n', '<leader>hD', function()
-        --   gs.diffthis '~'
-        -- end, { desc = 'git diff against last commit' })
-        --
-        -- -- Toggles
-        -- map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
-        -- map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
-        --
-        -- -- Text object
-        -- map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
       end,
     },
   },
@@ -265,18 +184,6 @@ require('lazy').setup({
   },
 
   'jiangmiao/auto-pairs',
-  --       These are some example plugins that I've included in the kickstart repository.
-  --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
-  --    up-to-date with whatever is in the kickstart repo.
-  --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  --
-  --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
 }, {})
 
 
@@ -285,7 +192,7 @@ require('lazy').setup({
 -- NOTE: You can change these options as you wish!
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 
 -- Make line numbers default
 vim.wo.number = true
@@ -472,24 +379,6 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
--- document existing key chains
--- require('which-key').register {
---   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
---   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
---   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
---   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
---   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
---   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
---   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
---   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
--- }
--- -- register which-key VISUAL mode
--- -- required for visual <leader>hs (hunk stage) to work
--- require('which-key').register({
---   ['<leader>'] = { name = 'VISUAL <leader>' },
---   ['<leader>h'] = { 'Git [H]unk' },
--- }, { mode = 'v' })
-
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
 require('mason').setup()
@@ -510,6 +399,7 @@ local servers = {
   -- rust_analyzer = {},
   angularls = {},
   tsserver = {},
+  dockerls = {},
   html = { filetypes = { 'html', 'twig', 'hbs' } },
   omnisharp = {},
   lua_ls = {
@@ -598,6 +488,3 @@ cmp.setup {
     { name = 'path' },
   },
 }
-
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
