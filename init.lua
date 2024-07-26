@@ -1,17 +1,25 @@
 -- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
+-- NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+
+-- Move to the end of yanked text after yank and paste
+vim.cmd("vnoremap <silent> y y`]")
+vim.cmd("vnoremap <silent> p p`]")
+vim.cmd("nnoremap <silent> p p`]")
+
+-- Quick jumping between splits
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
 
 vim.api.nvim_set_keymap('i', 'jj', '<Esc>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-d>', '<C-d>zz', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-u>', '<C-u>zz', { noremap = true })
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+vim.keymap.set("n", "<leader>pv", vim.cmd.Neotree)
 
--- [[ Install `lazy.nvim` plugin manager ]]
---    https://github.com/folke/lazy.nvim
---    `:help lazy.nvim.txt` for more info
+-- `:help lazy.nvim.txt` for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system {
@@ -23,19 +31,62 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   }
 end
-vim.opt.rtp:prepend(lazypath)
 
--- [[ Configure plugins ]]
+vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
---  You can configure plugins using the `config` key.
+-- You can configure plugins using the `config` key.
 --
 --  You can also configure plugins after the setup call,
---    as they will be available in your neovim runtime.
+--  as they will be available in your neovim runtime.
 require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
+  -- NeoTree 
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+      "MunifTanjim/nui.nvim",
+      "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
+    opts = {
+      filesystem = {
+        filtered_items = {
+          visible = true,
+          show_hidden_count = true,
+          hide_dotfiles = false,
+          hide_gitignored = true,
+        },
+        follow_current_file = {
+          enabled = true,
+          leave_dirs_open = false,
+        },
+      },
+      event_handlers = {
 
+        {
+          event = "file_open_requested",
+          handler = function()
+            -- auto close
+            -- vimc.cmd("Neotree close")
+            -- OR
+            require("neo-tree.command").execute({ action = "close" })
+          end
+        },
+
+      },
+      window = {
+        position = "right",
+        width = 60,
+        mappings = {
+          ["P"] = { "toggle_preview", config = { use_float = false, use_image_nvim = true } },
+        }
+      }
+    },
+  },
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   -- Copilot
@@ -56,15 +107,16 @@ require('lazy').setup({
       { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
 
+      -- The notifications on the left-bottom corner of the screen
       -- Useful status updates for LSP
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim',       opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
     },
   },
-
+'peitalin/vim-jsx-typescript',
+'leafgarland/typescript-vim',
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -91,6 +143,36 @@ require('lazy').setup({
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
     },
+  },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    event = { "BufReadPost", "BufNewFile" },
+    build = ":TSUpdate",
+    enabled = true,
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = {
+          "vimdoc",
+          "c_sharp",
+          "angular",
+          "javascript",
+          "typescript",
+          "lua",
+          "html",
+          "css",
+          "tsx",
+          "bash",
+          "markdown",
+          "markdown_inline",
+        },
+        indent = { enable = true },
+        highlight = {
+          enable = true,
+          use_languagetree = true,
+          -- disable = { "markdown" },
+        },
+      })
+    end,
   },
   {
     'akinsho/flutter-tools.nvim',
@@ -130,7 +212,7 @@ require('lazy').setup({
     config = function()
       require('gruvbox').setup {
         -- Set a style preset. 'dark' is default.
-        style = 'dark', -- dark, darker, cool, deep, warm, warmer, light
+        style = 'darker', -- dark, darker, cool, deep, warm, warmer, light
       }
       require('gruvbox').load()
     end,
@@ -140,14 +222,102 @@ require('lazy').setup({
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = true,
-        theme = 'gruvbox',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
+    config = function()
+      local colors = {
+        default_background = "#504945",
+        default_text = "#EBDBB2",
+        modified_background = "#AA4542",
+        saved_background = "#84A598",
+        branch_background = "#D68A00",
+        diagnostics_background = "#0B5D91",
+        filename_background = "#7E33B2",
+      }
+      local theme = {
+        normal = {
+          a = { bg = colors.saved_background, fg = colors.default_text },
+          b = { bg = colors.default_background, fg = colors.default_text },
+          c = { fg = colors.default_text, bg = colors.default_background },
+          z = { fg = colors.default_text, bg = colors.default_background },
+        },
+      }
+
+      local function modified_text()
+        if vim.bo.modified then
+          return "✘"
+        end
+        return "✔"
+      end
+
+      require("lualine").setup({
+        options = {
+          theme = theme,
+          icons_enabled = true,
+          separator = ""
+        },
+        sections = {
+          lualine_a = {
+            {
+              modified_text,
+              separator = { right = "" },
+              padding = {
+                left = 3,
+                right = 3,
+              },
+              color = function()
+                if vim.bo.modified then
+                  return { bg = colors.modified_background, fg = colors.default_text }
+                end
+                  return { bg = colors.saved_background, fg = colors.default_background }
+              end,
+            },
+          },
+          lualine_b = {
+            {
+              'branch',
+              separator = { right = "" },
+              padding = {
+                left = 1,
+                right = 2,
+              },
+              color = function ()
+                return { bg = colors.branch_background, fg = colors.default_background } 
+              end
+
+            },
+            {
+              'diagnostics',
+              separator = { right = "" },
+              padding = {
+                left = 1,
+                right = 2,
+              },
+              color = function ()
+                return { bg = colors.diagnostics_background, fg = colors.default_background } 
+              end
+
+            }
+          },
+          lualine_c = {
+            { 
+              "filename",
+              file_status = false,
+              path = 1,
+              separator = { right = "" },
+              padding = {
+                left = 1,
+                right = 2,
+              },
+              color = function ()
+                return { bg = colors.filename_background, fg = colors.default_text } 
+              end
+            },
+          },
+          lualine_x = {'filetype'},
+          lualine_y = {},
+          lualine_z = {},
+        },
+      })
+    end,
   },
 
   {
@@ -157,6 +327,12 @@ require('lazy').setup({
     -- See `:help ibl`
     main = 'ibl',
     opts = {},
+    config = function()
+      require("ibl").setup({
+        scope = { enabled = true },
+        indent = { char = "|" },
+      })
+    end
   },
 
   -- "gc" to comment visual regions/lines
@@ -180,12 +356,48 @@ require('lazy').setup({
           return vim.fn.executable 'make' == 1
         end,
       },
-    },
+    }
   },
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    dependencies = {
+      "hrsh7th/nvim-cmp",
+    },
+    config = function()
+      local autopairs = require("nvim-autopairs")
 
-  'jiangmiao/auto-pairs',
+      autopairs.setup({
+        check_ts = true, -- enable treesitter
+        ts_config = {
+          lua = { "string" }, -- don't add pairs in lua string treesitter nodes
+          javascript = { "template_string" }, -- don't add pairs in javscript template_string treesitter nodes
+          java = false, -- don't check treesitter on java
+          html = true,
+        },
+      })
+
+      -- import nvim-autopairs completion functionality
+      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+
+      -- import nvim-cmp plugin (completions plugin)
+      local cmp = require("cmp")
+
+      -- make autopairs and completion work together
+      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+    end,
+  },
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function() vim.fn["mkdp#util#install"]() end,
+  }
 }, {})
 
+-- Markdown Conf
+vim.keymap.set('n', '<leader>md', vim.cmd.MarkdownPreview)
+vim.keymap.set('n', '<leader>mds', vim.cmd.MarkdownPreviewStop)
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -193,7 +405,7 @@ require('lazy').setup({
 
 -- Set highlight on search
 vim.o.hlsearch = true
-
+vim.keymap.set('n', '<ESC>', '<cmd>nohlsearch<CR>')
 -- Make line numbers default
 vim.wo.number = true
 
@@ -201,8 +413,6 @@ vim.wo.number = true
 vim.o.mouse = 'a'
 
 -- Sync clipboard between OS and Neovim.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
 vim.o.clipboard = 'unnamedplus'
 
 -- Enable break indent
@@ -216,7 +426,9 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
-vim.wo.signcolumn = 'yes'
+-- vim.wo.signcolumn = 'yes'
+vim.opt.signcolumn = 'number'
+vim.cmd('highlight SignColumn guibg=dark')
 
 -- Decrease update time
 vim.o.updatetime = 250
@@ -228,7 +440,18 @@ vim.o.completeopt = 'menuone,noselect'
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
 
--- [[ Basic Keymaps ]]
+-- no swapfiles
+vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.writebackup = false
+
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+
+vim.opt.cursorline = true
+vim.opt.scrolloff = 10
+
+vim.opt.autochdir = false
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
@@ -244,6 +467,11 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnos
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
+vim.keymap.set({ 'n', 'v' }, 'H', '^', { desc = 'Move to beginning of line' })
+vim.keymap.set({ 'n', 'v' }, 'L', '$', { desc = 'Move to end of line without the break line char' })
+
+vim.keymap.set('v', '<Tab>', '>gv', { desc = 'Indent selected text' })
+vim.keymap.set('v', '<S-Tab>', '<gv', { desc = 'Unindent selected text' })
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
@@ -254,6 +482,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+-- Copilot Enable/Disable
+-- vim.cmd('Copilot disable')
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
@@ -308,12 +539,12 @@ end
 vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
 
 -- See `:help telescope.builtin`
--- vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader><space>', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 -- vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
+    winblend = 0,
     previewer = false,
   })
 end, { desc = '[/] Fuzzily search in current buffer' })
@@ -353,7 +584,6 @@ local on_attach = function(_, bufnr)
   end
 
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-
   nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
@@ -400,7 +630,7 @@ local servers = {
   angularls = {},
   tsserver = {},
   dockerls = {},
-  html = { filetypes = { 'html', 'twig', 'hbs' } },
+  html = { filetypes = { 'html', 'twig', 'hbs', 'tsx', 'jsx' } },
   omnisharp = {},
   lua_ls = {
     Lua = {
@@ -463,24 +693,6 @@ cmp.setup {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_locally_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.locally_jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
   },
   sources = {
     { name = 'nvim_lsp' },
