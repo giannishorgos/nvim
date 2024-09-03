@@ -368,10 +368,9 @@ require('lazy').setup({
       local autopairs = require("nvim-autopairs")
 
       autopairs.setup({
-        check_ts = true, -- enable treesitter
+        check_ts = false, -- enable treesitter
         ts_config = {
           lua = { "string" }, -- don't add pairs in lua string treesitter nodes
-          javascript = { "template_string" }, -- don't add pairs in javscript template_string treesitter nodes
           java = false, -- don't check treesitter on java
           html = true,
         },
@@ -408,6 +407,7 @@ vim.o.hlsearch = true
 vim.keymap.set('n', '<ESC>', '<cmd>nohlsearch<CR>')
 -- Make line numbers default
 vim.wo.number = true
+vim.wo.relativenumber = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -628,6 +628,7 @@ local servers = {
   -- pyright = {},
   -- rust_analyzer = {},
   angularls = {},
+  tailwindcss = {},
   tsserver = {},
   dockerls = {},
   html = { filetypes = { 'html', 'twig', 'hbs', 'tsx', 'jsx' } },
