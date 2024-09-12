@@ -391,7 +391,8 @@ require('lazy').setup({
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
-  }
+  },
+  'ThePrimeagen/vim-be-good'
 }, {})
 
 -- Markdown Conf
@@ -427,7 +428,7 @@ vim.o.smartcase = true
 
 -- Keep signcolumn on by default
 -- vim.wo.signcolumn = 'yes'
-vim.opt.signcolumn = 'number'
+vim.opt.signcolumn = 'yes'
 vim.cmd('highlight SignColumn guibg=dark')
 
 -- Decrease update time
@@ -452,6 +453,8 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 vim.opt.autochdir = false
+
+vim.opt.guicursor = "n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175"
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
@@ -544,7 +547,7 @@ vim.keymap.set('n', '<leader><space>', require('telescope.builtin').oldfiles, { 
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 0,
+    winblend = 5,
     previewer = false,
   })
 end, { desc = '[/] Fuzzily search in current buffer' })
@@ -603,6 +606,7 @@ local on_attach = function(_, bufnr)
   --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   -- end, '[W]orkspace [L]ist Folders')
 
+  -- Helper function to run Prettier
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
@@ -695,6 +699,7 @@ cmp.setup {
       select = true,
     },
   },
+
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
