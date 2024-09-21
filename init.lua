@@ -39,6 +39,11 @@ vim.opt.rtp:prepend(lazypath)
 --  You can also configure plugins after the setup call,
 --  as they will be available in your neovim runtime.
 require('lazy').setup({
+  { "karb94/neoscroll.nvim",
+    config = function ()
+       require('neoscroll').setup({})
+    end
+  },
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
