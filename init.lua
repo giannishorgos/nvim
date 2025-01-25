@@ -8,11 +8,19 @@ vim.cmd("vnoremap <silent> y y`]")
 vim.cmd("vnoremap <silent> p p`]")
 vim.cmd("nnoremap <silent> p p`]")
 
+-- NOTE: You should make sure your terminal supports this
+vim.o.termguicolors = true
+
 -- Quick jumping between splits
 vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
+
+
+-- Key mappings for vertical and horizontal splits
+vim.keymap.set("n", "<leader>sv", ":vsplit<CR>", { noremap = true, silent = true, desc = "Vertical Split" })
+vim.keymap.set("n", "<leader>sh", ":split<CR>", { noremap = true, silent = true, desc = "Horizontal Split" })
 
 vim.api.nvim_set_keymap('i', 'jj', '<Esc>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-d>', '<C-d>zz', { noremap = true })
@@ -39,15 +47,27 @@ vim.opt.rtp:prepend(lazypath)
 --  You can also configure plugins after the setup call,
 --  as they will be available in your neovim runtime.
 require('lazy').setup({
-  { "karb94/neoscroll.nvim",
-    config = function ()
-       require('neoscroll').setup({})
-    end
-  },
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
-  -- NeoTree 
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      scroll = {
+        animate = {
+          duration = { step = 15, total = 200 },
+          easing = "outQuad",
+        },
+        -- what buffers to animate
+        filter = function(buf)
+          return vim.g.snacks_scroll ~= false and vim.b[buf].snacks_scroll ~= false
+        end,
+      },
+    }
+  },
+  -- NeoTree
   {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
@@ -55,7 +75,7 @@ require('lazy').setup({
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
-      "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+      "3rd/image.nvim",              -- Optional image support in preview window: See `# Preview Mode` for more information
     },
     opts = {
       filesystem = {
@@ -63,7 +83,7 @@ require('lazy').setup({
           visible = true,
           show_hidden_count = true,
           hide_dotfiles = false,
-          hide_gitignored = true,
+          hide_gitignored = false,
         },
         follow_current_file = {
           enabled = true,
@@ -85,19 +105,28 @@ require('lazy').setup({
       },
       window = {
         position = "right",
-        width = 60,
+        width = 40,
         mappings = {
           ["P"] = { "toggle_preview", config = { use_float = false, use_image_nvim = true } },
         }
       }
     },
   },
+  -- Lua
+  {
+    "folke/zen-mode.nvim",
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    }
+  },
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  -- Copilot
-  'github/copilot.vim',
   -- HEX Colors preview
-  {'norcalli/nvim-colorizer.lua', opts = {
+  {
+    'norcalli/nvim-colorizer.lua',
+    opts = {
       '*',
       css = { rgb_fn = true, hsl_fn = true }
     }
@@ -114,14 +143,28 @@ require('lazy').setup({
 
       -- The notifications on the left-bottom corner of the screen
       -- Useful status updates for LSP
-      { 'j-hui/fidget.nvim',       opts = {} },
+      {
+        'j-hui/fidget.nvim',
+        opts = {
+          notification = {
+            window = {
+              winblend = 0
+            }
+          },
+          integration = {
+            ["nvim-tree"] = {
+              enable = true, -- Integrate with nvim-tree/nvim-tree.lua (if installed)
+            }
+          }
+        }
+      },
 
       -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
+      'folke/lazydev.nvim',
     },
   },
-'peitalin/vim-jsx-typescript',
-'leafgarland/typescript-vim',
+  'peitalin/vim-jsx-typescript',
+  'leafgarland/typescript-vim',
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -167,6 +210,7 @@ require('lazy').setup({
           "css",
           "tsx",
           "bash",
+          "python",
           "markdown",
           "markdown_inline",
         },
@@ -210,32 +254,50 @@ require('lazy').setup({
     },
   },
 
+  -- Themes
   {
     "ellisonleao/gruvbox.nvim",
     priority = 1000,
     lazy = false,
+    -- config = function()
+    --   require('gruvbox').setup {
+    --     -- Set a style preset. 'dark' is default.
+    --     style = 'darker', -- dark, darker, cool, deep, warm, warmer, light
+    --   }
+    --   require('gruvbox').load()
+    -- end,
+  },
+  { "bluz71/vim-moonfly-colors", name = "moonfly",  lazy = false, priority = 1000 },
+  { "rose-pine/neovim",          name = "rose-pine" },
+  {
+    "zenbones-theme/zenbones.nvim",
+    name = "zenbones",
+    dependencies = "rktjmp/lush.nvim",
+    lazy = false,
+  },
+  {
+    "philosofonusus/morta.nvim",
+    name = 'morta',
+    priority = 1000,
+    opts = {},
     config = function()
-      require('gruvbox').setup {
-        -- Set a style preset. 'dark' is default.
-        style = 'darker', -- dark, darker, cool, deep, warm, warmer, light
-      }
-      require('gruvbox').load()
+      vim.cmd.colorscheme 'morta'
     end,
   },
-
+  -- End Themes
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
     config = function()
       local colors = {
-        default_background = "#504945",
+        default_background = "#293241",
         default_text = "#EBDBB2",
         modified_background = "#AA4542",
         saved_background = "#84A598",
-        branch_background = "#D68A00",
-        diagnostics_background = "#0B5D91",
-        filename_background = "#7E33B2",
+        branch_background = "#6930c3",
+        diagnostics_background = "#5390d9",
+        filename_background = "#48bfe3",
       }
       local theme = {
         normal = {
@@ -272,7 +334,7 @@ require('lazy').setup({
                 if vim.bo.modified then
                   return { bg = colors.modified_background, fg = colors.default_text }
                 end
-                  return { bg = colors.saved_background, fg = colors.default_background }
+                return { bg = colors.saved_background, fg = colors.default_background }
               end,
             },
           },
@@ -284,8 +346,8 @@ require('lazy').setup({
                 left = 1,
                 right = 2,
               },
-              color = function ()
-                return { bg = colors.branch_background, fg = colors.default_background } 
+              color = function()
+                return { bg = colors.branch_background, fg = colors.default_text }
               end
 
             },
@@ -296,14 +358,14 @@ require('lazy').setup({
                 left = 1,
                 right = 2,
               },
-              color = function ()
-                return { bg = colors.diagnostics_background, fg = colors.default_background } 
+              color = function()
+                return { bg = colors.diagnostics_background, fg = colors.default_text }
               end
 
             }
           },
           lualine_c = {
-            { 
+            {
               "filename",
               file_status = false,
               path = 1,
@@ -312,12 +374,12 @@ require('lazy').setup({
                 left = 1,
                 right = 2,
               },
-              color = function ()
-                return { bg = colors.filename_background, fg = colors.default_text } 
+              color = function()
+                return { bg = colors.filename_background, fg = colors.default_text }
               end
             },
           },
-          lualine_x = {'filetype'},
+          lualine_x = { 'filetype' },
           lualine_y = {},
           lualine_z = {},
         },
@@ -334,8 +396,8 @@ require('lazy').setup({
     opts = {},
     config = function()
       require("ibl").setup({
-        scope = { enabled = true },
-        indent = { char = "|" },
+        scope = { enabled = false },
+        indent = { char = "·" },
       })
     end
   },
@@ -373,10 +435,10 @@ require('lazy').setup({
       local autopairs = require("nvim-autopairs")
 
       autopairs.setup({
-        check_ts = false, -- enable treesitter
+        check_ts = false,     -- enable treesitter
         ts_config = {
           lua = { "string" }, -- don't add pairs in lua string treesitter nodes
-          java = false, -- don't check treesitter on java
+          java = false,       -- don't check treesitter on java
           html = true,
         },
       })
@@ -410,10 +472,17 @@ vim.keymap.set('n', '<leader>mds', vim.cmd.MarkdownPreviewStop)
 
 -- Set highlight on search
 vim.o.hlsearch = true
+vim.g.zenbones_darken_commmoonlyents = 45
+vim.cmd.colorscheme('moonfly')
+vim.opt.background = "dark"
 vim.keymap.set('n', '<ESC>', '<cmd>nohlsearch<CR>')
 -- Make line numbers default
 vim.wo.number = true
 vim.wo.relativenumber = true
+
+-- Set the background color to none for transparency
+-- vim.cmd("highlight Normal guibg=NONE ctermbg=NONE")
+-- vim.cmd("highlight NonText guibg=NONE ctermbg=NONE")
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -432,9 +501,10 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
--- vim.wo.signcolumn = 'yes'
+vim.wo.signcolumn = 'yes'
 vim.opt.signcolumn = 'yes'
 vim.cmd('highlight SignColumn guibg=dark')
+
 
 -- Decrease update time
 vim.o.updatetime = 250
@@ -443,8 +513,6 @@ vim.o.timeoutlen = 500
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 
--- NOTE: You should make sure your terminal supports this
-vim.o.termguicolors = true
 
 -- no swapfiles
 vim.opt.swapfile = false
@@ -454,13 +522,15 @@ vim.opt.writebackup = false
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 
-vim.opt.cursorline = true
+vim.opt.cursorline = false
 vim.opt.scrolloff = 10
 
 vim.opt.autochdir = false
 
-vim.opt.guicursor = "n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175"
+vim.opt.guicursor =
+"n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175"
 
+vim.cmd("set nowrap")
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
@@ -472,8 +542,10 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
 
 vim.keymap.set({ 'n', 'v' }, 'H', '^', { desc = 'Move to beginning of line' })
 vim.keymap.set({ 'n', 'v' }, 'L', '$', { desc = 'Move to end of line without the break line char' })
@@ -492,7 +564,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- Copilot Enable/Disable
--- vim.cmd('Copilot disable')
+-- vim.cmd("Copilot disable")
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
@@ -601,7 +673,6 @@ local on_attach = function(_, bufnr)
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
   -- nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -632,20 +703,17 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
-  -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
+  pyright = {},
+  ts_ls = {},
   angularls = {},
   tailwindcss = {},
-  tsserver = {},
-  dockerls = {},
-  html = { filetypes = { 'html', 'twig', 'hbs', 'tsx', 'jsx' } },
+  html = { filetypes = { 'html', 'tsx', 'jsx' } },
   omnisharp = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
+      diagnostics = { globals = { 'vim' } }
       -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
       -- diagnostics = { disable = { 'missing-fields' } },
     },
@@ -653,7 +721,7 @@ local servers = {
 }
 
 -- Setup neovim lua configuration
-require('neodev').setup()
+-- require('neodev').setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -676,6 +744,13 @@ mason_lspconfig.setup_handlers {
     }
   end,
 }
+
+vim.cmd [[
+  hi Normal guibg=NONE ctermbg=NONE
+  hi LineNr guibg=NONE ctermbg=NONE
+  hi SignColumn guibg=NONE ctermbg=NONE
+  hi FloatBorder guibg=NONE
+]]
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
@@ -700,7 +775,7 @@ cmp.setup {
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
+      behavior = cmp.ConfirmBehavior.Insert,
       select = true,
     },
   },
